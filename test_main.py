@@ -57,5 +57,6 @@ def test_factorials_stop_iteration():
     except StopIteration:
         pass
 
+
 def test_factorials_dummy():
     assert False
