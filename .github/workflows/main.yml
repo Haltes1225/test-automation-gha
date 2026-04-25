@@ -27,7 +27,7 @@ jobs:
             options: --cpus="1"
         steps:
             - name: Check out Git repository
-              uses: actions/checkout@v5
+              uses: actions/checkout@v3
             - name: Run flake8
               run: flake8 ./ --append-config=./.flake8 --verbose
     
