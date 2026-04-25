@@ -57,7 +57,7 @@ jobs:
 
     test:
         name: Run Tests
-        needs: [lint] # Only run tests if linting passes
+        needs: [lint, static_analysis] # Only run tests if linting passes
         runs-on: ubuntu-latest
         steps:
             - name: Check out Git repository
