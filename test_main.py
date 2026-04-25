@@ -56,3 +56,6 @@ def test_factorials_stop_iteration():
         assert False, "StopIteration error expected"
     except StopIteration:
         pass
+
+def test_factorials_dummy():
+    assert False
