@@ -6,7 +6,7 @@ def factorials(n):
 
 
 def main():
-    for i, factorial in enumerate(factorials(100)):
+    for i, factorial in enumerate(factorials("a")):
         print(f"{i + 1}! = {factorial}")
 
 
