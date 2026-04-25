@@ -58,5 +58,5 @@ def test_factorials_stop_iteration():
         pass
 
 
-def test_factorials_dummy():
-    assert False
+# def test_factorials_dummy():
+#    assert False
