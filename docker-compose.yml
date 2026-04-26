@@ -1,0 +1,26 @@
+version: "3"
+
+volumes:
+  data:
+
+services:
+  formatter:
+    build:
+      context: .
+      dockerfile: Dockerfile.1
+    command: black .
+  linter:
+    build:
+      context: .
+      dockerfile: Dockerfile.1
+    command: flake8 .
+  static-type:
+    build:
+      context: .
+      dockerfile: Dockerfile.1
+    command: mypy
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.1
+    command: pytest

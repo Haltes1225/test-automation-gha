@@ -1,0 +1,18 @@
+#Build container
+docker build -t kodilla-2 -f Dockerfile.1 .
+
+#Run black check
+docker run --rm kodilla-2 black . --check
+
+#Run black changes
+docker run --rm kodilla-2 black .
+
+#Run flake8 and check exit code
+docker run --rm kodilla-2 flake8 .
+docker run --rm kodilla-2 echo  $?
+
+#Run mypy
+docker run --rm kodilla-2 mypy
+
+#Run pytest
+docker run --rm kodilla-2 pytest
