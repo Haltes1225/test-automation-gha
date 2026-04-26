@@ -1,4 +1,4 @@
-version: "3"
+version: "3.9"
 
 volumes:
   data:
@@ -13,14 +13,25 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.1
+    depends_on:
+      formatter:
+        condition: service_completed_successfully
     command: flake8 .
-  static-type:
+  static-type-checker:
     build:
       context: .
       dockerfile: Dockerfile.1
+    depends_on:
+      formatter:
+        condition: service_completed_successfully
     command: mypy
   tests:
     build:
       context: .
       dockerfile: Dockerfile.1
+    depends_on:
+      linter:
+        condition: service_completed_successfully
+      static-type-checker:
+        condition: service_completed_successfully
     command: pytest
