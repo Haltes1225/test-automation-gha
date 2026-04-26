@@ -16,3 +16,6 @@ docker run --rm kodilla-2 mypy
 
 #Run pytest
 docker run --rm kodilla-2 pytest
+
+#Run containers
+docker compose up
