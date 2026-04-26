@@ -1,0 +1,25 @@
+name: CI
+
+on:
+    push:
+        branches: 
+            - main
+
+#Zadanie 3.3
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Run Sequential Pipeline
+        run: docker compose run --rm tests
+
+      - name: Cleanup
+        if: always()
+        run: docker compose down -v

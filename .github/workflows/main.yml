@@ -4,90 +4,70 @@ on:
     push:
         branches: 
             - main
-
-#Zadanie 3.3
+      
 jobs:
-  run-pipeline:
-    runs-on: ubuntu-latest
+    format:
+        name: Check format
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v5
+        - uses: psf/black@22.3.0
+          with:
+            options: "--check --verbose"
+            src: "./"
+            version: "22.3.0"
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    lint:
+        name: Run linter
+        needs: [format]
+        runs-on: ubuntu-latest
+        container:
+            image: alpine/flake8:3.8.4
+            options: --cpus="1"
+        steps:
+            - name: Check out Git repository
+              uses: actions/checkout@v3
+            - name: Run flake8
+              run: flake8 ./ --append-config=./.flake8 --verbose
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+              
+    static_analysis:
+        name: Static Code Analysis (Mypy)
+        needs: [format]
+        runs-on: ubuntu-latest
+        steps:
+        - name: Check out Git repository
+          uses: actions/checkout@v6
 
-      - name: Run Sequential Pipeline
-        run: docker compose run --rm tests
+        - name: Set up Python
+          uses: actions/setup-python@v5
+          with:
+            python-version: '3.14.3'
+            cache: 'pip' # Speeds up subsequent runs
 
-      - name: Cleanup
-        if: always()
-        run: docker compose down -v
+        - name: Install dependencies
+          run: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
 
-#Zadanie 3.2:            
-#jobs:
-#    format:
-#        name: Check format
-#        runs-on: ubuntu-latest
-#        steps:
-#        - uses: actions/checkout@v5
-#        - uses: psf/black@22.3.0
-#          with:
-#            options: "--check --verbose"
-#            src: "./"
-#            version: "22.3.0"
-#
-#    lint:
-#        name: Run linter
-#        needs: [format]
-#        runs-on: ubuntu-latest
-#        container:
-#            image: alpine/flake8:3.8.4
-#            options: --cpus="1"
-#        steps:
-#            - name: Check out Git repository
-#              uses: actions/checkout@v3
-#            - name: Run flake8
-#              run: flake8 ./ --append-config=./.flake8 --verbose
-#
-#              
-#    static_analysis:
-#        name: Static Code Analysis (Mypy)
-#        needs: [format]
-#        runs-on: ubuntu-latest
-#        steps:
-#        - name: Check out Git repository
-#          uses: actions/checkout@v6
-#
-#        - name: Set up Python
-#          uses: actions/setup-python@v5
-#          with:
-#            python-version: '3.14.3'
-#            cache: 'pip' # Speeds up subsequent runs
-#
-#        - name: Install dependencies
-#          run: |
-#            python -m pip install --upgrade pip
-#            pip install -r requirements.txt
-#
-#        - name: Run Mypy
-#          run: mypy
-#
-#
-#    test:
-#        name: Run Tests
-#        needs: [lint, static_analysis] # Only run tests if linting passes
-#        runs-on: ubuntu-latest
-#        steps:
-#            - name: Check out Git repository
-#              uses: actions/checkout@v5
-#            - name: Set up Python
-#              uses: actions/setup-python@v5
-#              with:
-#                python-version: '3.14.3' # Match your local version
-#            - name: Install dependencies
-#              run: |
-#                python -m pip install --upgrade pip
-#                pip install -r requirements.txt
-#            - name: Run pytest
-#              run: pytest 
+        - name: Run Mypy
+          run: mypy
+
+
+    test:
+        name: Run Tests
+        needs: [lint, static_analysis] # Only run tests if linting passes
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out Git repository
+              uses: actions/checkout@v5
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                python-version: '3.14.3' # Match your local version
+            - name: Install dependencies
+              run: |
+                python -m pip install --upgrade pip
+                pip install -r requirements.txt
+            - name: Run pytest
+              run: pytest 
