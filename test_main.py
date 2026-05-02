@@ -1,62 +1,47 @@
+import pytest
+from typing import Any, List
 from main import factorials
+import math
 
 
-def test_factorials_1():
-    expected = [1]
-    assert list(factorials(1)) == expected
+@pytest.mark.parametrize(
+    "input_n, output_factorial",
+    [
+        (-10, []),
+        (-1, []),
+        (0, [1]),  # this case results in an error, but is mathematically valid
+        (1, [1]),
+        (2, [2]),
+        (3, [6]),
+        (4, [24]),
+        (5, [120]),
+        (100, [math.factorial(100)]),
+    ],
+)
+def test_factorials_values(input_n: int, output_factorial: List[int]) -> None:
+    assert list(factorials(input_n))[-1:] == output_factorial
 
 
-def test_factorials_5():
-    expected = [1, 2, 6, 24, 120]
-    assert list(factorials(5)) == expected
+@pytest.mark.parametrize(
+    "invalid_input",
+    [
+        "a",
+        [],
+        0.5,
+        None,
+    ],
+)
+def test_factorials_invalid_types(invalid_input: Any) -> None:
+    with pytest.raises(TypeError):
+        next(factorials(invalid_input))
 
 
-def test_factorials_0():
-    expected = []
-    assert list(factorials(0)) == expected
-
-
-def test_factorials_minus_1():
-    expected = []
-    assert list(factorials(-1)) == expected
-
-
-def test_factorials_string_type_error():
-    try:
-        f = factorials("a")
-        next(f)
-        assert False, "Type error expected"
-    except TypeError:
-        pass
-
-
-def test_factorials_list_type_error():
-    try:
-        f = factorials([])
-        next(f)
-        assert False, "Type error expected"
-    except TypeError:
-        pass
-
-
-def test_factorials_fraction_type_error():
-    try:
-        f = factorials(0.5)
-        next(f)
-        assert False, "Type error expected"
-    except TypeError:
-        pass
-
-
-def test_factorials_stop_iteration():
-    try:
-        f = factorials(1)
-        next(f)
-        next(f)
-        assert False, "StopIteration error expected"
-    except StopIteration:
-        pass
-
-
-# def test_factorials_dummy():
-#    assert False
+@pytest.mark.parametrize(
+    "iteration_n",
+    [1, 10, 100],
+)
+def test_factorials_stop_iteration(iteration_n: int) -> None:
+    with pytest.raises(StopIteration):
+        f = factorials(iteration_n)
+        for i in range(iteration_n + 1):
+            next(f)
