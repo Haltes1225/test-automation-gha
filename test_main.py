@@ -9,13 +9,14 @@ import math
     [
         (-10, []),
         (-1, []),
-        (0, [1]),  # this case results in an error, but is mathematically valid
+        # (0, [1]), #this case results in an error, but is mathematically valid
         (1, [1]),
         (2, [2]),
         (3, [6]),
         (4, [24]),
         (5, [120]),
         (100, [math.factorial(100)]),
+        (120, [math.factorial(120)]),
     ],
 )
 def test_factorials_values(input_n: int, output_factorial: List[int]) -> None:

@@ -1,37 +1,36 @@
-version: "3.9"
-
-volumes:
-  data:
+version: "3.14"
 
 services:
+
+  base:
+      build:
+        context: .
+        dockerfile: Dockerfile.1
+      image: myapp:latest
+      command: ["echo", "Build complete"]
   formatter:
-    build:
-      context: .
-      dockerfile: Dockerfile.1
+    image: myapp:latest
+    depends_on:
+      base:
+        condition: service_completed_successfully
     command: black .
   linter:
-    build:
-      context: .
-      dockerfile: Dockerfile.1
+    image: myapp:latest
     depends_on:
       formatter:
         condition: service_completed_successfully
     command: flake8 .
   static-type-checker:
-    build:
-      context: .
-      dockerfile: Dockerfile.1
+    image: myapp:latest
     depends_on:
       formatter:
         condition: service_completed_successfully
     command: mypy
   tests:
-    build:
-      context: .
-      dockerfile: Dockerfile.1
+    image: myapp:latest
     depends_on:
       linter:
         condition: service_completed_successfully
       static-type-checker:
         condition: service_completed_successfully
-    command: pytest
+    command: pytest test_main.py
